@@ -51,6 +51,10 @@ app.listen(PORT, () => {
 });
 
 
+// found one that will guarantee generating a random string that is 6 characters long every time! 
+
 function generateRandomString() {
-  
+  return Math.random().toString(36).substring(2, 8);
 }
+
+console.log(generateRandomString());
