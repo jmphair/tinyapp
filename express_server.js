@@ -57,7 +57,7 @@ app.post("/urls", (req, res) => {
 
 app.post("/urls/:id/delete", (req, res) => {
   
-  delete urlDatabase[req.params.id]; // same as francis example use a function eventually but not yet...
+  delete urlDatabase[req.params.id];
   res.redirect(`/urls`);
   
 });
