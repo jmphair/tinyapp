@@ -62,6 +62,7 @@ app.post("/urls/:id/delete", (req, res) => {
   
 });
 
+// in case this happens again, if you don't use "http://" then there's a cookies bug
 app.get("/u/:id", (req, res) => {
   const longURL = `${urlDatabase[req.params.id]}`;
   res.redirect(longURL);
@@ -70,8 +71,3 @@ app.get("/u/:id", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
-
-
-
-// When using nodemon with files in a shared filesystem in vagrant, we must use the -L flag.
-// ./node_modules/.bin/nodemon -L express_server.js
