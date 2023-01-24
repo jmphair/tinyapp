@@ -2,6 +2,11 @@ const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
 
+const generateRandomString = () => {
+  return Math.random().toString(36).substring(2, 8);
+};
+
+
 app.set("view engine", "ejs");
 
 const urlDatabase = {
@@ -36,25 +41,23 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
 
+
+// REMEMBER to use dot notation when you know the value and square bracket notation when you don't! 
+
 app.get("/urls/:id", (req, res) => {
-  const templateVars = { id: req.params.id, longURL: "http://www.lighthouselabs.ca" };
+  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id] };
   res.render("urls_show", templateVars);
 });
 
 app.post("/urls", (req, res) => {
-  console.log(req.body); // Log the POST request body to the console
-  res.send("Ok"); // Respond with 'Ok' (we will replace this)
+  console.log(req.body.longURL); // Log the POST request body to the console
+  console.log("key: ", generateRandomString());
+  const id = generateRandomString();
+  urlDatabase[id] = req.body.longURL;
+  console.log(urlDatabase);
+  res.redirect(`/urls/${id}`);
 });
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
-
-
-// found one that will guarantee generating a random string that is 6 characters long every time! 
-
-function generateRandomString() {
-  return Math.random().toString(36).substring(2, 8);
-}
-
-console.log(generateRandomString());
