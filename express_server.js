@@ -6,7 +6,6 @@ const generateRandomString = () => {
   return Math.random().toString(36).substring(2, 8);
 };
 
-
 app.set("view engine", "ejs");
 
 const urlDatabase = {
@@ -17,8 +16,6 @@ const urlDatabase = {
 // needs to come BEFORE all of our routes bc we need the middleware to parse the data before it's needed by the routes!
 
 app.use(express.urlencoded({ extended: true }));
-
-// good rule of thumb to follow is that route should be ordered from most to least specific
 
 app.get("/", (req, res) => {
   res.send("Hello!");
@@ -58,6 +55,13 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${id}`);
 });
 
+app.post("/urls/:id/delete", (req, res) => {
+  
+  delete urlDatabase[req.params.id]; // same as francis example use a function eventually but not yet...
+  res.redirect(`/urls`);
+  
+});
+
 app.get("/u/:id", (req, res) => {
   const longURL = `${urlDatabase[req.params.id]}`;
   res.redirect(longURL);
@@ -66,6 +70,7 @@ app.get("/u/:id", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
+
 
 
 // When using nodemon with files in a shared filesystem in vagrant, we must use the -L flag.
