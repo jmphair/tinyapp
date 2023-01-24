@@ -66,3 +66,7 @@ app.get("/u/:id", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
+
+
+// When using nodemon with files in a shared filesystem in vagrant, we must use the -L flag.
+// ./node_modules/.bin/nodemon -L express_server.js
