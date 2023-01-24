@@ -71,6 +71,13 @@ app.post("/urls/:id/edit", (req, res) => {
   
 });
 
+app.post("/login", (req, res) => {
+  
+  res.cookie("username", req.body.username);
+  res.redirect(`/urls`);
+  
+});
+
 // in case this happens again, if you don't use "http://" then there may be a cookies bug
 app.get("/u/:id", (req, res) => {
   const longURL = `${urlDatabase[req.params.id]}`;
