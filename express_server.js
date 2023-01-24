@@ -8,14 +8,15 @@ const generateRandomString = () => {
 
 app.set("view engine", "ejs");
 
+
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
 
-// needs to come BEFORE all of our routes bc we need the middleware to parse the data before it's needed by the routes!
 
 app.use(express.urlencoded({ extended: true }));
+
 
 app.get("/", (req, res) => {
   res.send("Hello!");
@@ -53,7 +54,6 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${shortURL}`);
 });
 
-// DELETE
 app.post("/urls/:id/delete", (req, res) => {
   
   delete urlDatabase[req.params.id];
@@ -61,7 +61,6 @@ app.post("/urls/:id/delete", (req, res) => {
   
 });
 
-// EDIT
 app.post("/urls/:id/edit", (req, res) => {
   const shortURL = req.params.id;
   const longURL = req.body.longURL;
@@ -72,7 +71,7 @@ app.post("/urls/:id/edit", (req, res) => {
   
 });
 
-// in case this happens again, if you don't use "http://" then there's a cookies bug
+// in case this happens again, if you don't use "http://" then there may be a cookies bug
 app.get("/u/:id", (req, res) => {
   const longURL = `${urlDatabase[req.params.id]}`;
   res.redirect(longURL);
