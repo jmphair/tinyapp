@@ -64,6 +64,13 @@ app.post("/urls/:id/delete", (req, res) => {
   
 });
 
+app.post("/urls/:id/edit", (req, res) => {
+  
+  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id] };
+  res.render("urls_show", templateVars);
+  
+});
+
 // in case this happens again, if you don't use "http://" then there's a cookies bug
 app.get("/u/:id", (req, res) => {
   const longURL = `${urlDatabase[req.params.id]}`;
