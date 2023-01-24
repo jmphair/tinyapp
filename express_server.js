@@ -38,25 +38,22 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
 
-
-// REMEMBER to use dot notation when you know the value and square bracket notation when you don't! 
-
 app.get("/urls/:id", (req, res) => {
   const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id] };
   res.render("urls_show", templateVars);
 });
 
 
-// urls_show:
 app.post("/urls", (req, res) => {
-  // console.log(req.body.longURL); // Log the POST request body to the console
-  // console.log("key: ", generateRandomString());
-  const id = generateRandomString();
-  urlDatabase[id] = req.body.longURL;
+  const shortURL = generateRandomString();
+  const longURL = req.body.longURL;
+
+  urlDatabase[shortURL] = longURL;
   console.log(urlDatabase);
-  res.redirect(`/urls/${id}`);
+  res.redirect(`/urls/${shortURL}`);
 });
 
+// DELETE
 app.post("/urls/:id/delete", (req, res) => {
   
   delete urlDatabase[req.params.id];
@@ -64,10 +61,14 @@ app.post("/urls/:id/delete", (req, res) => {
   
 });
 
+// EDIT
 app.post("/urls/:id/edit", (req, res) => {
+  const shortURL = req.params.id;
+  const longURL = req.body.longURL;
   
-  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id] };
-  res.render("urls_show", templateVars);
+  urlDatabase[shortURL] = longURL;
+
+  res.redirect(`/urls`);
   
 });
 
