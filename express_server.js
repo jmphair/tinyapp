@@ -46,6 +46,8 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
+
+// urls_show:
 app.post("/urls", (req, res) => {
   // console.log(req.body.longURL); // Log the POST request body to the console
   // console.log("key: ", generateRandomString());
