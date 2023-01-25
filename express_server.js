@@ -76,6 +76,12 @@ app.post("/urls/:id/edit", (req, res) => {
   
 });
 
+app.get("/register", (req, res) => {
+
+  
+
+});
+
 app.post("/login", (req, res) => {
   
   res.cookie("username", req.body.username);
@@ -89,6 +95,7 @@ app.post("/logout", (req, res) => {
   res.redirect(`/urls`);
   
 });
+
 
 // in case this happens again, if you don't use "http://" then there may be a cookies bug
 app.get("/u/:id", (req, res) => {
