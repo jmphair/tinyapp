@@ -51,17 +51,26 @@ app.get("/hello", (req, res) => {
 
 //////////// URL ROUTES 
 app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase, username: req.cookies["username"] };
+  const userId = req.cookies["user_id"];
+  const user = users[userId];
+  
+  const templateVars = { urls: urlDatabase, user };
   res.render("urls_index", templateVars);
 });
 
 app.get("/urls/new", (req, res) => {
-  const templateVars = { username: req.cookies["username"] };
+  const userId = req.cookies["user_id"];
+  const user = users[userId];
+  
+  const templateVars = { user };
   res.render("urls_new", templateVars);
 });
 
 app.get("/urls/:id", (req, res) => {
-  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id], username: req.cookies["username"] };
+  const userId = req.cookies["user_id"];
+  const user = users[userId];
+  
+  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id], user };
   res.render("urls_show", templateVars);
 });
 
@@ -86,36 +95,47 @@ app.post("/urls/:id/edit", (req, res) => {
 });
 
 
-//////////// USER REGISTRATION ROUTES 
+//////////// USER REGISTRATION HANDLER ROUTES 
 // no post route yet, this get is just to render the new template
 
 app.get("/register", (req, res) => {
-  const templateVars = { username: req.cookies["username"] }; // I actually only need one...
-  res.render("user_registration", templateVars);
+  const userId = req.cookies["user_id"];
+  const user = users[userId];
+
+  // const templateVars = ; // I actually only need one...
+  console.log(req.cookies["user_id"]);
+  res.render("user_registration", { user });
 });
 
 app.post("/register", (req, res) => {
  
-  let userId = generateRandomString();
-  users[userId] = {
+  const userId = generateRandomString();
+  
+  const user = {
     id: userId,
     email: req.body.email,
     password: req.body.password
   }
+
+  users[userId] = user;
+
   res.cookie("user_id", userId);
-  console.log(users);
+
+  console.log("entire users object:\n", users);
+  console.log("just user email:\n", user.email);
+
   res.redirect(`/urls`);
 
 });
 
 //////////// COOKIE USERNAME ROUTES 
 app.post("/login", (req, res) => {
-  res.cookie("username", req.body.username);
+  res.cookie("user_id", req.body.user_id);
   res.redirect(`/urls`);
 });
 
 app.post("/logout", (req, res) => {
-  res.clearCookie("username", req.body.username);
+  res.clearCookie("user_id", req.body.user_id);
   res.redirect(`/urls`);
 });
 
