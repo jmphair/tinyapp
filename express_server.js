@@ -76,9 +76,12 @@ app.post("/urls/:id/edit", (req, res) => {
   
 });
 
+// no post route yet, this get is just to render the new template
+// also adding the header throws an error right now... removed from below "<body>" <%- include('partials/_header') %>
+ 
 app.get("/register", (req, res) => {
 
-  
+  res.render("user_registration");
 
 });
 
