@@ -93,8 +93,9 @@ app.post("/urls/:id/edit", (req, res) => {
 // also adding the header throws an error right now... removed from below "<body>" <%- include('partials/_header') %>
  
 app.get("/register", (req, res) => {
-
-  res.render("user_registration");
+  
+  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id], username: req.cookies["username"] };
+  res.render("user_registration", templateVars);
 
 });
 
