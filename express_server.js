@@ -108,14 +108,22 @@ app.get("/register", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
- 
-  const userId = generateRandomString();
-  
-  const user = {
-    id: userId,
-    email: req.body.email,
-    password: req.body.password
+  // need to add a variable that allows us to see if the email already exists
+  let email = req.body.email;
+  // IF there isn't an email/passord we will return the 400 error but with a better description for the user
+  if (!req.body.email || !req.body.password) {
+    return res.status(400).send("One or more fields left empty. Please try again.");
   }
+  // for users that have already registered we can check our users database and return the 400 error if they've already signed up
+  for (const user in users) {
+    if (users[user].email === email) {
+      return res.status(400).send("Account exists. Please login.");
+    }
+  };
+
+  // basically the happy path is that if neither of the above is an issue then the below runs as normal!
+  const userId = generateRandomString();
+  const user = { id: userId, email: req.body.email, password: req.body.password };
 
   users[userId] = user;
 
