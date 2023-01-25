@@ -112,6 +112,15 @@ app.get("/register", (req, res) => {
   res.render("user_registration", { user });
 });
 
+app.get("/login", (req, res) => {
+  
+  const userId = req.cookies["user_id"];
+  const user = users[userId];
+  
+  res.render("user_login", { user });
+
+});
+
 app.post("/register", (req, res) => {
   // need to add a variable that allows us to see if the email already exists
   let email = req.body.email;
