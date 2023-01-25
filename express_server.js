@@ -15,6 +15,11 @@ app.use(cookieParser());
 app.use(morgan('dev'));
 
 
+//////////// HELPER FUNCTIONS 
+// const getUserByEmail = () => {}
+// Played with this for awhile but sure how to implement it yet... 
+
+
 //////////// DATA SOURCES 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
