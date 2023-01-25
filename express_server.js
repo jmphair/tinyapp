@@ -17,7 +17,7 @@ app.use(morgan('dev'));
 
 //////////// HELPER FUNCTIONS 
 // const getUserByEmail = () => {}
-// Played with this for awhile but sure how to implement it yet... 
+// Played with this for awhile but not sure how to implement it yet... 
 
 
 //////////// DATA SOURCES 
@@ -101,32 +101,24 @@ app.post("/urls/:id/edit", (req, res) => {
 
 
 //////////// USER REGISTRATION HANDLER ROUTES 
-// no post route yet, this get is just to render the new template
-
 app.get("/register", (req, res) => {
   const userId = req.cookies["user_id"];
   const user = users[userId];
-
-  // const templateVars = ; // I actually only need one...
   console.log(req.cookies["user_id"]);
   res.render("user_registration", { user });
 });
 
 app.post("/register", (req, res) => {
-  // need to add a variable that allows us to see if the email already exists
   let email = req.body.email;
-  // IF there isn't an email/passord we will return the 400 error but with a better description for the user
   if (!req.body.email || !req.body.password) {
     return res.status(400).send("One or more fields left empty. Please try again.");
   }
-  // for users that have already registered we can check our users database and return the 400 error if they've already signed up
   for (const user in users) {
     if (users[user].email === email) {
       return res.status(400).send("Account exists. Please login.");
     }
   };
 
-  // basically the happy path is that if neither of the above is an issue then the below runs as normal!
   const userId = generateRandomString();
   const user = { id: userId, email: req.body.email, password: req.body.password };
 
@@ -142,7 +134,6 @@ app.post("/register", (req, res) => {
 });
 
 //////////// LOGIN HANDLER ROUTES 
-
 app.get("/login", (req, res) => {
   const userId = req.cookies["user_id"];
   const user = users[userId];
@@ -173,7 +164,7 @@ app.post("/logout", (req, res) => {
 
 
 //////////// U/:ID ROUTES
-// in case this happens again, if you don't use "http://" then there may be a cookies bug
+// in case this happens again, if you don't use "http://" then there may be a cookies bug in Chrome
 app.get("/u/:id", (req, res) => {
   const longURL = `${urlDatabase[req.params.id]}`;
   res.redirect(longURL);
