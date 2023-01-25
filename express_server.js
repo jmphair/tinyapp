@@ -112,15 +112,6 @@ app.get("/register", (req, res) => {
   res.render("user_registration", { user });
 });
 
-app.get("/login", (req, res) => {
-  
-  const userId = req.cookies["user_id"];
-  const user = users[userId];
-  
-  res.render("user_login", { user });
-
-});
-
 app.post("/register", (req, res) => {
   // need to add a variable that allows us to see if the email already exists
   let email = req.body.email;
@@ -150,15 +141,36 @@ app.post("/register", (req, res) => {
 
 });
 
-//////////// COOKIE USERNAME ROUTES 
-app.post("/login", (req, res) => {
-  res.cookie("user_id", req.body.user_id);
-  res.redirect(`/urls`);
+//////////// LOGIN HANDLER ROUTES 
+
+app.get("/login", (req, res) => {
+  const userId = req.cookies["user_id"];
+  const user = users[userId];
+  res.render("user_login", { user });
 });
 
+app.post("/login", (req, res) => {
+  // need to work on those helper functions so my code is DRY...
+  let email = req.body.email;
+  let password = req.body.password;
+  
+  // initial loop logic didn't work... seem to have figured out I needed to nest my if statements
+  for (const user in users) {
+    if (users[user].email === email) {
+      if (users[user].password === password) {
+        res.cookie("user_id", users[user].id);
+        return res.redirect(`/urls`);
+      } 
+      return res.status(403).send("Wrong password entered.")
+    }
+  };
+  return res.status(403).send("403 - an account doesn't exist.")
+});
+
+// have to fix the button in header... it's not working properly
 app.post("/logout", (req, res) => {
   res.clearCookie("user_id", req.body.user_id);
-  res.redirect(`/urls`);
+  res.redirect(`/login`);
 });
 
 
