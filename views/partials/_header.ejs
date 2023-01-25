@@ -17,8 +17,10 @@
         <a class="nav-item nav-link" href="/urls">My URLs</a>
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       <% if (user) { %>
-        <span style="margin: 0.5em"> Logged in as: <%= user.email %>! </span>
-        <button type="submit" class="btn btn-primary">Log Out</button>
+        <form class="form-inline" action="/logout" method="POST">
+          <span style="margin: 0.5em"> Logged in as: <%= user.email %>! </span>
+          <button type="submit" class="btn btn-primary">Log Out</button>
+        </form>
       <% } else { %>
         <a class="nav-item nav-link" href="/register">New User - Register Here</a>
         <a class="nav-item nav-link" href="/login">Existing User - Login Here</a>
