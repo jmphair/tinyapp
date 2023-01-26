@@ -206,6 +206,15 @@ app.get("/register", (req, res) => {
   res.render("user_registration", { user });
 });
 
+const getUserByEmail = (email, users) => {
+  for (const userID in users) {
+    if (users[userID].email === email) {
+      return userID;
+    }
+  }
+  return;
+};
+
 app.post("/register", (req, res) => {
   let email = req.body.email;
   let password = req.body.password;
@@ -214,11 +223,12 @@ app.post("/register", (req, res) => {
   if (!req.body.email || !req.body.password) {
     return res.status(400).send("One or more fields left empty. Please try again.");
   }
-  for (const user in users) {
-    if (users[user].email === email) {
-      return res.status(400).send("Account exists. Please login.");
-    }
-  };
+  
+  // ok phew... it actually wasn't as hard to implement here as I thought... was just overwhelmed yesterday. A hard lesson to learn.
+  const userID = getUserByEmail(email, users);
+  if (userID) {
+    return res.status(400).send("Account exists. Please login.");
+  }
 
   const userId = generateRandomString();
   const user = { id: userId, email: req.body.email, hashedPassword };
@@ -246,13 +256,7 @@ app.get("/login", (req, res) => {
 
 // need to work on the email helper function so my code is DRY... this will get too complicated later! do it now.
 
-const getUserByEmail = (email, users) => {
-   for (const userID in users) {
-    if (users[userID].email === email) {
-      return userID;
-    }
-   }
-}
+
 
 
 
