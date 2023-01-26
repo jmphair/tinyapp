@@ -22,8 +22,14 @@ app.use(morgan('dev'));
 
 //////////// DATA SOURCES 
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  b6UTxQ: {
+    longURL: "https://www.tsn.ca",
+    userID: "aJ48lW",
+  },
+  i3BoGr: {
+    longURL: "https://www.google.ca",
+    userID: "aJ48lW",
+  },
 };
 
 const users = {
@@ -32,8 +38,8 @@ const users = {
     email: "user@example.com",
     password: "123",
   },
-  user2RandomID: {
-    id: "user2RandomID",
+  aJ48lW: {
+    id: "aJ48lW",
     email: "user2@example.com",
     password: "456",
   },
@@ -59,7 +65,10 @@ app.get("/urls", (req, res) => {
   const userId = req.cookies["user_id"];
   const user = users[userId];
   
-  const templateVars = { urls: urlDatabase, user };
+  const templateVars = { 
+    urls: urlDatabase, 
+    user 
+  };
   res.render("urls_index", templateVars);
 });
 
@@ -76,8 +85,10 @@ app.get("/urls/new", (req, res) => {
 app.get("/urls/:id", (req, res) => {
   const userId = req.cookies["user_id"];
   const user = users[userId];
-  
-  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id], user };
+  const shortURL = req.params.id;
+
+
+  const templateVars = { id: shortURL, longURL: urlDatabase[shortURL].longURL, user };
   res.render("urls_show", templateVars);
 });
 
@@ -182,7 +193,7 @@ app.post("/logout", (req, res) => {
 // in case this happens again, if you don't use "http://" then there may be a cookies bug in Chrome
 app.get("/u/:id", (req, res) => {
   const shortURL = req.params.id;
-  const longURL = urlDatabase[shortURL];
+  const longURL = urlDatabase[shortURL].longURL;
   
   if (!longURL) {
     return res.status(400).send("This short URL has not been created.");
