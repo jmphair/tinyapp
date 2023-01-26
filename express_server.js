@@ -1,7 +1,7 @@
 //////////// APP REQUIRES/VARIABLES/ETC ////////////
 const express = require("express");
-const morgan = require('morgan');
-const cookieParser = require("cookie-parser");
+const morgan = require("morgan");
+const cookieSession = require("cookie-session");
 const bcrypt = require("bcryptjs");
 const app = express();
 const PORT = 8080; // default port 8080
@@ -10,8 +10,11 @@ app.set("view engine", "ejs");
 
 //////////// MIDDLEWARE ////////////
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
-app.use(morgan('dev'));
+app.use(morgan("dev"));
+app.use(cookieSession({
+  name: "session",
+  keys: ["key1", "key2"],
+}));
 
 
 //////////// HELPER FUNCTIONS ////////////
