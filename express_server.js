@@ -101,15 +101,19 @@ app.get("/urls/:id", (req, res) => {
   const userId = req.cookies["user_id"];
   const user = users[userId];
   const shortURL = req.params.id;
-  const longURL = urlDatabase[shortURL].longURL;
-  // if (user !== users[userId].userID) {
-  //   return res.status(400).send("You can't view this short URL."); 
-  // }
   
-  //////////// The individual URL pages should not be accessible to users who are not logged in.
-
+  if (!urlDatabase.hasOwnProperty(shortURL)) {
+    return res.status(400).send("This URL does not exist.");
+  }
+  if (!req.cookies["user_id"]) {
+    return res.status(400).send("Please login to view this short URL."); 
+  }
+  if (!urlsForUser(userId).hasOwnProperty(shortURL)) {
+    return res.status(400).send("You are not authorized to view this link.")
+  }
+  
+  const longURL = urlDatabase[shortURL].longURL;
   // console.log(urlDatabase[shortURL].longURL); // it is showing up
-
   const templateVars = { 
     id: shortURL,
     userID: userId, 
@@ -151,12 +155,37 @@ app.post("/urls", (req, res) => {
 });
 
 app.post("/urls/:id/delete", (req, res) => {
+  const userId = req.cookies["user_id"];
+  const shortURL = req.params.id;
+  
+  if (!urlDatabase.hasOwnProperty(shortURL)) {
+    return res.status(400).send("This URL does not exist.");
+  }
+  if (!req.cookies["user_id"]) {
+    return res.status(400).send("Please login to delete this short URL."); 
+  }
+  if (!urlsForUser(userId).hasOwnProperty(shortURL)) {
+    return res.status(400).send("You are not authorized to delete this link.")
+  }
+  
   delete urlDatabase[req.params.id];
   res.redirect(`/urls`);
 });
 
 app.post("/urls/:id/edit", (req, res) => {
+  const userId = req.cookies["user_id"];
   const shortURL = req.params.id;
+  
+  if (!urlDatabase.hasOwnProperty(shortURL)) {
+    return res.status(400).send("This URL does not exist.");
+  }
+  if (!req.cookies["user_id"]) {
+    return res.status(400).send("Please login to edit this short URL."); 
+  }
+  if (!urlsForUser(userId).hasOwnProperty(shortURL)) {
+    return res.status(400).send("You are not authorized to edit this link.")
+  }
+  
   const longURL = req.body.longURL;
   urlDatabase[shortURL].longURL = longURL;
   res.redirect(`/urls`);
