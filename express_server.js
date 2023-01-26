@@ -2,20 +2,25 @@
 const express = require("express");
 const morgan = require('morgan');
 const cookieParser = require("cookie-parser");
-const generateRandomString = () => {return Math.random().toString(36).substring(2, 8);};
 const app = express();
 const PORT = 8080; // default port 8080
 
 app.set("view engine", "ejs");
 
 
-//////////// APPS TO USE 
+//////////// MIDDLEWARE
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(morgan('dev'));
 
 
 //////////// HELPER FUNCTIONS 
+// const getUserByEmail = () => {}
+// Played with this for awhile but not sure how to implement it yet...
+// touché compass... we have to use helper functions or the refactor is super complicated...
+
+const generateRandomString = () => {return Math.random().toString(36).substring(2, 8);};
+
 const urlsForUser = (userID) => {
   const filteredURLS = {};
   for (let shortURL in urlDatabase) {
@@ -25,8 +30,6 @@ const urlsForUser = (userID) => {
   }
   return filteredURLS;
 };
-
-// const getUserByEmail = () => {} // have to come back to this one
 
 
 //////////// DATA SOURCES 
@@ -70,6 +73,10 @@ app.get("/hello", (req, res) => {
 
 
 //////////// URL ROUTES 
+
+// helper function move up later
+
+
 app.get("/urls", (req, res) => {
   const userId = req.cookies["user_id"];
   const user = users[userId];
@@ -95,23 +102,21 @@ app.get("/urls/:id", (req, res) => {
   const user = users[userId];
   const shortURL = req.params.id;
   const longURL = urlDatabase[shortURL].longURL;
-  if (user !== users[userId].userID) {
-    return res.send("You can't view this short URL."); 
-  }
+  // if (user !== users[userId].userID) {
+  //   return res.status(400).send("You can't view this short URL."); 
+  // }
   
   //////////// The individual URL pages should not be accessible to users who are not logged in.
 
-  ///// ask for help from here
+  // console.log(urlDatabase[shortURL].longURL); // it is showing up
 
-  // console.log(urlDatabase[shortURL].longURL); // it is showing up.
-
-  const templateVars = {  
-    longURL: longURL,
-    shortURL: shortURL, 
-    userID: userId,
-    user: user
+  const templateVars = { 
+    id: shortURL,
+    userID: userId, 
+    longURL, 
+    user
   };
-
+  
   res.render("urls_show", templateVars);
 });
 
