@@ -86,8 +86,8 @@ app.get("/urls/:id", (req, res) => {
   const user = users[userId];
   const shortURL = req.params.id;
 
-
-  const templateVars = { id: shortURL, longURL: urlDatabase[shortURL].long, user };
+  console.log(urlDatabase[shortURL].longURL);
+  const templateVars = { id: shortURL, longURL: urlDatabase[shortURL].longURL, user };
   res.render("urls_show", templateVars);
 });
 
@@ -102,7 +102,7 @@ app.post("/urls", (req, res) => {
   
   const shortURL = generateRandomString();
   const longURL = req.body.longURL;
-  urlDatabase[shortURL] = longURL;
+  urlDatabase[shortURL] = { longURL, userID: userId};
   res.redirect(`/urls/${shortURL}`);
 });
 
@@ -114,7 +114,7 @@ app.post("/urls/:id/delete", (req, res) => {
 app.post("/urls/:id/edit", (req, res) => {
   const shortURL = req.params.id;
   const longURL = req.body.longURL;
-  urlDatabase[shortURL] = longURL;
+  urlDatabase[shortURL].longURL = longURL;
   res.redirect(`/urls`);
 });
 
