@@ -63,11 +63,25 @@ app.get("/hello", (req, res) => {
 
 
 //////////// URL ROUTES 
+
+// helper function move up later
+const urlsForUser = (userID) => {
+  const filteredURLS = {};
+  for (let shortURL in urlDatabase) {
+    if (userID === urlDatabase[shortURL].userID) {
+      filteredURLS[shortURL] = urlDatabase[shortURL];
+    }
+  }
+  return filteredURLS;
+};
+
 app.get("/urls", (req, res) => {
   const userId = req.cookies["user_id"];
   const user = users[userId];
-  
-  const templateVars = { urls: urlDatabase, user };
+  const templateVars = { urls: urlsForUser(userId), user };
+  if (!user) {
+    return res.status(400).send("Please login or register to view your short URLs.");
+  }
   res.render("urls_index", templateVars);
 });
 
