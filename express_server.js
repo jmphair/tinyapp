@@ -1,6 +1,7 @@
 //////////// APP REQUIRES/VARIABLES/ETC ////////////
 const express = require("express");
 const morgan = require("morgan");
+const { getUserByEmail } = require("./helpers")
 const cookieSession = require("cookie-session");
 const bcrypt = require("bcryptjs");
 const app = express();
@@ -18,15 +19,7 @@ app.use(cookieSession({
 
 
 //////////// HELPER FUNCTIONS ////////////
-// This function sees if it can find a users email in the database.
-const getUserByEmail = (email, users) => {
-  for (const userID in users) {
-    if (users[userID].email === email) {
-      return userID;
-    }
-  }
-  return;
-};
+
 
 // This function generates random alphanumeric strings that are 6 characters long.
 const generateRandomString = () => {
