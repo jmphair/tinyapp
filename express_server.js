@@ -16,11 +16,13 @@ app.use(morgan('dev'));
 
 //////////// HELPER FUNCTIONS 
 // const getUserByEmail = () => {}
-// Played with this for awhile but not sure how to implement it yet...
-// touché compass... we have to use helper functions or the refactor is super complicated...
 
-const generateRandomString = () => {return Math.random().toString(36).substring(2, 8);};
+// This function generates random alphanumeric strings that are 6 characters long.
+const generateRandomString = () => {
+  return Math.random().toString(36).substring(2, 8);
+};
 
+// This function will return only the URLs for the currently logged in user. 
 const urlsForUser = (userID) => {
   const filteredURLS = {};
   for (let shortURL in urlDatabase) {
