@@ -1,22 +1,20 @@
-//////////// APP REQUIRES/VARIABLES/ETC 
+//////////// APP REQUIRES/VARIABLES/ETC ////////////
 const express = require("express");
 const morgan = require('morgan');
 const cookieParser = require("cookie-parser");
 const bcrypt = require("bcryptjs");
-
 const app = express();
 const PORT = 8080; // default port 8080
-
 app.set("view engine", "ejs");
 
 
-//////////// MIDDLEWARE
+//////////// MIDDLEWARE ////////////
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(morgan('dev'));
 
 
-//////////// HELPER FUNCTIONS 
+//////////// HELPER FUNCTIONS ////////////
 // This function sees if it can find a users email in the database.
 const getUserByEmail = (email, users) => {
   for (const userID in users) {
@@ -44,7 +42,7 @@ const urlsForUser = (userID) => {
 };
 
 
-//////////// DATA SOURCES 
+//////////// DATA SOURCES ////////////
 const urlDatabase = {
   b6UTxQ: {
     longURL: "https://www.tsn.ca",
@@ -70,7 +68,7 @@ const users = {
 };
 
 
-//////////// EXAMPLE/TEMP ROUTES 
+//////////// EXAMPLE/TEMP ROUTES ////////////
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
@@ -84,11 +82,7 @@ app.get("/hello", (req, res) => {
 });
 
 
-//////////// URL ROUTES 
-
-// helper function move up later
-
-
+//////////// URL ROUTES ////////////
 app.get("/urls", (req, res) => {
   const userId = req.cookies["user_id"];
   const user = users[userId];
@@ -125,7 +119,6 @@ app.get("/urls/:id", (req, res) => {
   }
   
   const longURL = urlDatabase[shortURL].longURL;
-  // console.log(urlDatabase[shortURL].longURL); // it is showing up
   const templateVars = { 
     id: shortURL,
     userID: userId, 
@@ -136,7 +129,6 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
-// in case this happens again, if you don't use "http://" then there may be a cookies bug in Chrome
 app.get("/u/:id", (req, res) => {
   const shortURL = req.params.id;
   const longURL = urlDatabase[shortURL].longURL;
@@ -149,8 +141,7 @@ app.get("/u/:id", (req, res) => {
 app.post("/urls", (req, res) => {
   const userId = req.cookies["user_id"];
   const user = users[userId];
-  // Remember, even though we redirect the GET /urls/new requests to GET /login, we still have to protect the POST /urls route too. Hiding the page to submit new urls isn't enough - a malicious user could use simple curl commands to interact with our server.
-  // curl -X POST -d "longURL=http://www.lighthouselabs.com" localhost:8080/urls
+ 
   if (!user) {
     return res.status(400).send("Please login or register to create short URLs!");
   }
@@ -204,7 +195,7 @@ app.post("/urls/:id/edit", (req, res) => {
 });
 
 
-//////////// USER REGISTRATION HANDLER ROUTES 
+//////////// USER REGISTRATION HANDLER ROUTES ////////////
 app.get("/register", (req, res) => {
   const userId = req.cookies["user_id"];
   const user = users[userId];
@@ -214,8 +205,6 @@ app.get("/register", (req, res) => {
   console.log(req.cookies["user_id"]);
   res.render("user_registration", { user });
 });
-
-
 
 app.post("/register", (req, res) => {
   let email = req.body.email;
@@ -245,7 +234,8 @@ app.post("/register", (req, res) => {
 
 });
 
-//////////// LOGIN HANDLER ROUTES 
+
+//////////// LOGIN HANDLER ROUTES ////////////
 app.get("/login", (req, res) => {
   const userId = req.cookies["user_id"];
   const user = users[userId];
@@ -276,7 +266,7 @@ app.post("/logout", (req, res) => {
 });
 
 
-//////////// PORT LISTENER 
+//////////// PORT LISTENER ////////////
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
