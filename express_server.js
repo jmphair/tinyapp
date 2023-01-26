@@ -17,6 +17,15 @@ app.use(morgan('dev'));
 
 
 //////////// HELPER FUNCTIONS 
+// This function sees if it can find a users email in the database.
+const getUserByEmail = (email, users) => {
+  for (const userID in users) {
+    if (users[userID].email === email) {
+      return userID;
+    }
+  }
+  return;
+};
 
 // This function generates random alphanumeric strings that are 6 characters long.
 const generateRandomString = () => {
@@ -206,14 +215,7 @@ app.get("/register", (req, res) => {
   res.render("user_registration", { user });
 });
 
-const getUserByEmail = (email, users) => {
-  for (const userID in users) {
-    if (users[userID].email === email) {
-      return userID;
-    }
-  }
-  return;
-};
+
 
 app.post("/register", (req, res) => {
   let email = req.body.email;
@@ -224,7 +226,6 @@ app.post("/register", (req, res) => {
     return res.status(400).send("One or more fields left empty. Please try again.");
   }
   
-  // ok phew... it actually wasn't as hard to implement here as I thought... was just overwhelmed yesterday. A hard lesson to learn.
   const userID = getUserByEmail(email, users);
   if (userID) {
     return res.status(400).send("Account exists. Please login.");
@@ -254,26 +255,18 @@ app.get("/login", (req, res) => {
   res.render("user_login", { user });
 });
 
-// need to work on the email helper function so my code is DRY... this will get too complicated later! do it now.
-
-
-
-
-
 app.post("/login", (req, res) => {
   let email = req.body.email;
   let password = req.body.password;
-  const hashedPassword = bcrypt.hashSync(password, 10);
 
-  for (const user in users) {
-    if (users[user].email === email) {
-      if (bcrypt.compareSync(password, hashedPassword)) {
-        res.cookie("user_id", users[user].id);
+  const userID = getUserByEmail(email, users);
+    if (userID) {
+      if (bcrypt.compareSync(password, users[userID].hashedPassword)) {
+        res.cookie("user_id", users[userID].id);
         return res.redirect(`/urls`);
       } 
       return res.status(403).send("Wrong password entered.")
     }
-  };
   return res.status(403).send("403 - an account doesn't exist.")
 });
 
