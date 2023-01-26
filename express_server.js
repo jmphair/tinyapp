@@ -16,10 +16,17 @@ app.use(morgan('dev'));
 
 
 //////////// HELPER FUNCTIONS 
-// const getUserByEmail = () => {}
-// Played with this for awhile but not sure how to implement it yet...
-// touché compass... we have to use helper functions or the refactor is super complicated...
+const urlsForUser = (userID) => {
+  const filteredURLS = {};
+  for (let shortURL in urlDatabase) {
+    if (userID === urlDatabase[shortURL].userID) {
+      filteredURLS[shortURL] = urlDatabase[shortURL];
+    }
+  }
+  return filteredURLS;
+};
 
+// const getUserByEmail = () => {} // have to come back to this one
 
 
 //////////// DATA SOURCES 
@@ -63,18 +70,6 @@ app.get("/hello", (req, res) => {
 
 
 //////////// URL ROUTES 
-
-// helper function move up later
-const urlsForUser = (userID) => {
-  const filteredURLS = {};
-  for (let shortURL in urlDatabase) {
-    if (userID === urlDatabase[shortURL].userID) {
-      filteredURLS[shortURL] = urlDatabase[shortURL];
-    }
-  }
-  return filteredURLS;
-};
-
 app.get("/urls", (req, res) => {
   const userId = req.cookies["user_id"];
   const user = users[userId];
@@ -100,19 +95,34 @@ app.get("/urls/:id", (req, res) => {
   const user = users[userId];
   const shortURL = req.params.id;
   const longURL = urlDatabase[shortURL].longURL;
-  // if (user !== users[userId].userID) {
-  //   return res.status(400).send("You can't view this short URL."); 
-  // }
-
-  console.log(urlDatabase[shortURL].longURL);
-  const templateVars = { 
-    id: shortURL, 
-    longURL: longURL, 
-    userID: userId,
-    user
-  };
+  if (user !== users[userId].userID) {
+    return res.send("You can't view this short URL."); 
+  }
   
+  //////////// The individual URL pages should not be accessible to users who are not logged in.
+
+  ///// ask for help from here
+
+  // console.log(urlDatabase[shortURL].longURL); // it is showing up.
+
+  const templateVars = {  
+    longURL: longURL,
+    shortURL: shortURL, 
+    userID: userId,
+    user: user
+  };
+
   res.render("urls_show", templateVars);
+});
+
+// in case this happens again, if you don't use "http://" then there may be a cookies bug in Chrome
+app.get("/u/:id", (req, res) => {
+  const shortURL = req.params.id;
+  const longURL = urlDatabase[shortURL].longURL;
+  if (!longURL) {
+    return res.status(400).send("This short URL has not been created.");
+  }
+  res.redirect(longURL);
 });
 
 app.post("/urls", (req, res) => {
@@ -128,9 +138,9 @@ app.post("/urls", (req, res) => {
   const longURL = req.body.longURL;
   urlDatabase[shortURL] = { longURL, userID: userId};
 
-  console.log("user creating new url:\n", userId);
-  console.log("single object being added:\n", urlDatabase[shortURL]);
-  console.log("entire urlDatabase object:\n", urlDatabase);
+  // console.log("user creating new url:\n", userId);
+  // console.log("single object being added:\n", urlDatabase[shortURL]);
+  // console.log("entire urlDatabase object:\n", urlDatabase);
 
   res.redirect(`/urls/${shortURL}`);
 });
@@ -195,7 +205,7 @@ app.get("/login", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  // need to work on those helper functions so my code is DRY...
+  // need to work on the email helper function so my code is DRY...
   let email = req.body.email;
   let password = req.body.password;
   
@@ -214,20 +224,6 @@ app.post("/login", (req, res) => {
 app.post("/logout", (req, res) => {
   res.clearCookie("user_id", req.body.user_id);
   res.redirect(`/login`);
-});
-
-
-//////////// U/:ID ROUTES
-// in case this happens again, if you don't use "http://" then there may be a cookies bug in Chrome
-app.get("/u/:id", (req, res) => {
-  const shortURL = req.params.id;
-  const longURL = urlDatabase[shortURL].longURL;
-  
-  if (!longURL) {
-    return res.status(400).send("This short URL has not been created.");
-  }
-
-  res.redirect(longURL);
 });
 
 
