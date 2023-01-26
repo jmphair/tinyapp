@@ -87,7 +87,7 @@ app.get("/hello", (req, res) => {
 
 //////////// URL ROUTES ////////////
 app.get("/urls", (req, res) => {
-  const userId = req.cookies["user_id"];
+  const userId = req.session["user_id"];
   const user = users[userId];
   const templateVars = { urls: urlsForUser(userId), user };
   if (!user) {
@@ -97,7 +97,7 @@ app.get("/urls", (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
-  const userId = req.cookies["user_id"];
+  const userId = req.session["user_id"];
   const user = users[userId];
   const templateVars = { user };
   if (!user) {
@@ -107,14 +107,14 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/urls/:id", (req, res) => {
-  const userId = req.cookies["user_id"];
+  const userId = req.session["user_id"];
   const user = users[userId];
   const shortURL = req.params.id;
   
   if (!urlDatabase.hasOwnProperty(shortURL)) {
     return res.status(400).send("This URL does not exist.");
   }
-  if (!req.cookies["user_id"]) {
+  if (!req.session["user_id"]) {
     return res.status(400).send("Please login to view this short URL."); 
   }
   if (!urlsForUser(userId).hasOwnProperty(shortURL)) {
@@ -142,7 +142,7 @@ app.get("/u/:id", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  const userId = req.cookies["user_id"];
+  const userId = req.session["user_id"];
   const user = users[userId];
  
   if (!user) {
@@ -161,13 +161,13 @@ app.post("/urls", (req, res) => {
 });
 
 app.post("/urls/:id/delete", (req, res) => {
-  const userId = req.cookies["user_id"];
+  const userId = req.session["user_id"];
   const shortURL = req.params.id;
   
   if (!urlDatabase.hasOwnProperty(shortURL)) {
     return res.status(400).send("This URL does not exist.");
   }
-  if (!req.cookies["user_id"]) {
+  if (!req.session["user_id"]) {
     return res.status(400).send("Please login to delete this short URL."); 
   }
   if (!urlsForUser(userId).hasOwnProperty(shortURL)) {
@@ -179,13 +179,13 @@ app.post("/urls/:id/delete", (req, res) => {
 });
 
 app.post("/urls/:id/edit", (req, res) => {
-  const userId = req.cookies["user_id"];
+  const userId = req.session["user_id"];
   const shortURL = req.params.id;
   
   if (!urlDatabase.hasOwnProperty(shortURL)) {
     return res.status(400).send("This URL does not exist.");
   }
-  if (!req.cookies["user_id"]) {
+  if (!req.session["user_id"]) {
     return res.status(400).send("Please login to edit this short URL."); 
   }
   if (!urlsForUser(userId).hasOwnProperty(shortURL)) {
@@ -200,12 +200,12 @@ app.post("/urls/:id/edit", (req, res) => {
 
 //////////// USER REGISTRATION HANDLER ROUTES ////////////
 app.get("/register", (req, res) => {
-  const userId = req.cookies["user_id"];
+  const userId = req.session["user_id"];
   const user = users[userId];
   if (user) {
     return res.redirect(`/urls`);
   }
-  console.log(req.cookies["user_id"]);
+  console.log(req.session["user_id"]);
   res.render("user_registration", { user });
 });
 
@@ -228,7 +228,7 @@ app.post("/register", (req, res) => {
 
   users[userId] = user;
 
-  res.cookie("user_id", userId);
+  req.session.user_id = userId;
 
   console.log("entire users object:\n", users);
   console.log("just user hashedPassword:\n", user.hashedPassword);
@@ -240,7 +240,7 @@ app.post("/register", (req, res) => {
 
 //////////// LOGIN HANDLER ROUTES ////////////
 app.get("/login", (req, res) => {
-  const userId = req.cookies["user_id"];
+  const userId = req.session["user_id"];
   const user = users[userId];
   if (user) {
     return res.redirect(`/urls`);
@@ -255,7 +255,7 @@ app.post("/login", (req, res) => {
   const userID = getUserByEmail(email, users);
     if (userID) {
       if (bcrypt.compareSync(password, users[userID].hashedPassword)) {
-        res.cookie("user_id", users[userID].id);
+        req.session.user_id = users[userID].id;
         return res.redirect(`/urls`);
       } 
       return res.status(403).send("Wrong password entered.")
@@ -263,8 +263,9 @@ app.post("/login", (req, res) => {
   return res.status(403).send("403 - an account doesn't exist.")
 });
 
+// From github notes -- to destroy a session use "null"
 app.post("/logout", (req, res) => {
-  res.clearCookie("user_id", req.body.user_id);
+  req.session = null;
   res.redirect(`/login`);
 });
 
