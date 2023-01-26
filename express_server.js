@@ -103,6 +103,11 @@ app.post("/urls", (req, res) => {
   const shortURL = generateRandomString();
   const longURL = req.body.longURL;
   urlDatabase[shortURL] = { longURL, userID: userId};
+
+  console.log("user creating new url:\n", userId);
+  console.log("single object being added:\n", urlDatabase[shortURL]);
+  console.log("entire urlDatabase object:\n", urlDatabase);
+
   res.redirect(`/urls/${shortURL}`);
 });
 
@@ -148,8 +153,8 @@ app.post("/register", (req, res) => {
 
   res.cookie("user_id", userId);
 
-  console.log("entire users object:\n", users);
-  console.log("just user email:\n", user.email);
+  // console.log("entire users object:\n", users);
+  // console.log("just user email:\n", user.email);
 
   res.redirect(`/urls`);
 
