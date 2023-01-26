@@ -2,6 +2,8 @@
 const express = require("express");
 const morgan = require('morgan');
 const cookieParser = require("cookie-parser");
+const bcrypt = require("bcryptjs");
+
 const app = express();
 const PORT = 8080; // default port 8080
 
@@ -207,6 +209,9 @@ app.get("/register", (req, res) => {
 
 app.post("/register", (req, res) => {
   let email = req.body.email;
+  let password = req.body.password;
+  const hashedPassword = bcrypt.hashSync(password, 10);
+
   if (!req.body.email || !req.body.password) {
     return res.status(400).send("One or more fields left empty. Please try again.");
   }
@@ -217,14 +222,14 @@ app.post("/register", (req, res) => {
   };
 
   const userId = generateRandomString();
-  const user = { id: userId, email: req.body.email, password: req.body.password };
+  const user = { id: userId, email: req.body.email, hashedPassword };
 
   users[userId] = user;
 
   res.cookie("user_id", userId);
 
-  // console.log("entire users object:\n", users);
-  // console.log("just user email:\n", user.email);
+  console.log("entire users object:\n", users);
+  console.log("just user hashedPassword:\n", user.hashedPassword);
 
   res.redirect(`/urls`);
 
@@ -240,14 +245,19 @@ app.get("/login", (req, res) => {
   res.render("user_login", { user });
 });
 
+  // need to work on the email helper function so my code is DRY... this will get too complicated later! do it now.
+
+
+
+
 app.post("/login", (req, res) => {
-  // need to work on the email helper function so my code is DRY...
   let email = req.body.email;
   let password = req.body.password;
-  
+  const hashedPassword = bcrypt.hashSync(password, 10);
+
   for (const user in users) {
     if (users[user].email === email) {
-      if (users[user].password === password) {
+      if (bcrypt.compareSync(password, hashedPassword)) {
         res.cookie("user_id", users[user].id);
         return res.redirect(`/urls`);
       } 
