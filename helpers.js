@@ -1,6 +1,5 @@
 //////////// HELPER FUNCTIONS ////////////
 
-
 // This function sees if it can find a users email in the database.
 const getUserByEmail = (email, users) => {
   for (const userID in users) {
@@ -13,6 +12,4 @@ const getUserByEmail = (email, users) => {
 
 
 //////////// EXPORT ////////////
-
-
 module.exports = { getUserByEmail };
