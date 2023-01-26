@@ -17,7 +17,6 @@ app.use(morgan('dev'));
 
 
 //////////// HELPER FUNCTIONS 
-// const getUserByEmail = () => {}
 
 // This function generates random alphanumeric strings that are 6 characters long.
 const generateRandomString = () => {
@@ -245,8 +244,15 @@ app.get("/login", (req, res) => {
   res.render("user_login", { user });
 });
 
-  // need to work on the email helper function so my code is DRY... this will get too complicated later! do it now.
+// need to work on the email helper function so my code is DRY... this will get too complicated later! do it now.
 
+const getUserByEmail = (email, users) => {
+   for (const userID in users) {
+    if (users[userID].email === email) {
+      return userID;
+    }
+   }
+}
 
 
 
