@@ -58,12 +58,12 @@ const users = {
   userRandomID: {
     id: "userRandomID",
     email: "user@example.com",
-    password: "123",
+    hashedPassword: "$2a$10$dV0k6t7TCh/tiITg0pRND.9DKNq17iDjlopZb.X50W940jZOmmTpq", // for testing 123
   },
   aJ48lW: {
     id: "aJ48lW",
     email: "user2@example.com",
-    password: "456",
+    hashedPassword: "$2a$10$.FKtRb3ootTFHKY4TlSoMOdw1Wafnf6RmXyUsawxcwxFa5uY./K6i", // for testing 456
   },
 };
 
