@@ -99,9 +99,19 @@ app.get("/urls/:id", (req, res) => {
   const userId = req.cookies["user_id"];
   const user = users[userId];
   const shortURL = req.params.id;
+  const longURL = urlDatabase[shortURL].longURL;
+  // if (user !== users[userId].userID) {
+  //   return res.status(400).send("You can't view this short URL."); 
+  // }
 
   console.log(urlDatabase[shortURL].longURL);
-  const templateVars = { id: shortURL, longURL: urlDatabase[shortURL].longURL, user };
+  const templateVars = { 
+    id: shortURL, 
+    longURL: longURL, 
+    userID: userId,
+    user
+  };
+  
   res.render("urls_show", templateVars);
 });
 
