@@ -181,7 +181,13 @@ app.post("/logout", (req, res) => {
 //////////// U/:ID ROUTES
 // in case this happens again, if you don't use "http://" then there may be a cookies bug in Chrome
 app.get("/u/:id", (req, res) => {
-  const longURL = `${urlDatabase[req.params.id]}`;
+  const shortURL = req.params.id;
+  const longURL = urlDatabase[shortURL];
+  
+  if (!longURL) {
+    return res.status(400).send("This short URL has not been created.");
+  }
+
   res.redirect(longURL);
 });
 
