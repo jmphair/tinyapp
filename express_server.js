@@ -17,7 +17,9 @@ app.use(morgan('dev'));
 
 //////////// HELPER FUNCTIONS 
 // const getUserByEmail = () => {}
-// Played with this for awhile but not sure how to implement it yet... 
+// Played with this for awhile but not sure how to implement it yet...
+// touché compass... we have to use helper functions or the refactor is super complicated...
+
 
 
 //////////// DATA SOURCES 
@@ -65,10 +67,7 @@ app.get("/urls", (req, res) => {
   const userId = req.cookies["user_id"];
   const user = users[userId];
   
-  const templateVars = { 
-    urls: urlDatabase, 
-    user 
-  };
+  const templateVars = { urls: urlDatabase, user };
   res.render("urls_index", templateVars);
 });
 
@@ -88,7 +87,7 @@ app.get("/urls/:id", (req, res) => {
   const shortURL = req.params.id;
 
 
-  const templateVars = { id: shortURL, longURL: urlDatabase[shortURL].longURL, user };
+  const templateVars = { id: shortURL, longURL: urlDatabase[shortURL].long, user };
   res.render("urls_show", templateVars);
 });
 
