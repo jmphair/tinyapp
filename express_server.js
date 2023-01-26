@@ -104,6 +104,9 @@ app.post("/urls/:id/edit", (req, res) => {
 app.get("/register", (req, res) => {
   const userId = req.cookies["user_id"];
   const user = users[userId];
+  if (user) {
+    return res.redirect(`/urls`);
+  }
   console.log(req.cookies["user_id"]);
   res.render("user_registration", { user });
 });
@@ -137,6 +140,9 @@ app.post("/register", (req, res) => {
 app.get("/login", (req, res) => {
   const userId = req.cookies["user_id"];
   const user = users[userId];
+  if (user) {
+    return res.redirect(`/urls`);
+  }
   res.render("user_login", { user });
 });
 
