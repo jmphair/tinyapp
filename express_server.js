@@ -66,8 +66,10 @@ app.get("/urls", (req, res) => {
 app.get("/urls/new", (req, res) => {
   const userId = req.cookies["user_id"];
   const user = users[userId];
-  
   const templateVars = { user };
+  if (!user) {
+    res.redirect(`/login`);
+  }
   res.render("urls_new", templateVars);
 });
 
@@ -80,10 +82,17 @@ app.get("/urls/:id", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
+  const userId = req.cookies["user_id"];
+  const user = users[userId];
+  // Remember, even though we redirect the GET /urls/new requests to GET /login, we still have to protect the POST /urls route too. Hiding the page to submit new urls isn't enough - a malicious user could use simple curl commands to interact with our server.
+  // curl -X POST -d "longURL=http://www.lighthouselabs.com" localhost:8080/urls
+  if (!user) {
+    return res.status(400).send("Please login or register to create short URLs!");
+  }
+  
   const shortURL = generateRandomString();
   const longURL = req.body.longURL;
   urlDatabase[shortURL] = longURL;
-  // console.log(urlDatabase);
   res.redirect(`/urls/${shortURL}`);
 });
 
